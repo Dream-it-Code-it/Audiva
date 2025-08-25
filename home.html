@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<!-- Home Dashboard Page (home.html) -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AUDIVA - HOME</title>
+  <style>
+    :root {
+      --primary: #00aaff;
+      --light-bg: #f9fbff;
+      --text-dark: #222;
+      --border: #e0e0e0;
+      --shadow: rgba(0, 0, 0, 0.05);
+      --radius: 12px;
+
+      --dark-bg: #121212;
+      --light-text: #f0f0f0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--light-bg);
+      color: var(--text-dark);
+      text-align: center;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    body.dark-mode {
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+    }
+
+    .site-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 4px var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1002;
+    }
+
+    .dark-mode .site-header {
+      background: #1e1e1e;
+      border-bottom: 1px solid #444;
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .logo {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    /* Toggle Button */
+    .theme-toggle {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+
+    .theme-icon {
+      display: inline-block;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .theme-icon.sun {
+      color: #f39c12;
+    }
+
+    .theme-icon.moon {
+      color: #f0f0f0;
+      transform: rotate(360deg);
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -220px;
+      width: 200px;
+      height: 100%;
+      background-color: white;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      transition: left 0.3s ease;
+      padding: 60px 1rem 1rem;
+      z-index: 1001;
+    }
+
+    .side-menu.active {
+      left: 0;
+    }
+
+    .dark-mode .side-menu {
+      background-color: #1e1e1e;
+    }
+
+    .side-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+    }
+
+    .side-menu li {
+      margin-bottom: 1.2rem;
+    }
+
+    .side-menu a {
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: none;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    .home-container {
+      padding: 3rem 1rem;
+    }
+
+    .cursive {
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.5rem;
+      color: #666;
+    }
+
+    .dark-mode .cursive {
+      color: #aaa;
+    }
+
+    .title {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--primary);
+      letter-spacing: 0.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #555;
+    }
+
+    .quote {
+      font-style: italic;
+      font-size: 1rem;
+      margin: 1rem 0 2rem;
+      color: #666;
+    }
+
+    .main-btn {
+      padding: 12px 28px;
+      font-size: 1rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      box-shadow: 0 4px 10px var(--shadow);
+      transition: background 0.3s ease;
+    }
+
+    .main-btn:hover {
+      background-color: #008ecc;
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 2.2rem;
+      }
+
+      .subtitle, .quote {
+        font-size: 1rem;
+      }
+
+      .main-btn {
+        width: 90%;
+        padding: 12px 0;
+      }
+    }
+
+    .Copyright {
+      width: 100%;
+      height: 1px;
+      background-color: black;
+      justify-content: center;
+      position: relative;
+      top:16rem;
+      text-align: center;
+      font-style: oblique;
+      padding-top: .1px;
+    }
+
+    .dark-mode .Copyright {
+      background-color: #333;
+      color: #ccc;
+      
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div class="logo">Audiva</div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Day/Night Mode">
+      <span id="themeIcon" class="theme-icon sun">☀️</span>
+    </button>
+  </header>
+
+  <!-- Sidebar Menu 
+  <nav class="side-menu" id="sideMenu">
+    <ul>
+      <li><a href="#">Upload</a></li>
+      <li><a href="upload_Schedule.html">Schedule Plan</a></li>
+      <li><a href="confirm.html">Schedule Confirm</a></li>
+    </ul>
+  </nav>-->
+
+  <!-- Overlay -->
+  <div class="overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+  <!-- Main Content -->
+  <main class="home-container">
+    <h2 class="cursive">Let's Schedule Your</h2>
+    <h1 class="title">AUDIVA</h1>
+    <p class="subtitle">Announcement Playback</p>
+    <p class="quote">"A plan is what a schedule is when. It takes<br>both plan and schedule to get things done."</p>
+    <button class="main-btn" onclick="goToUpload()">Play Now</button>
+    <br>
+    <div class="Copyright">&#169; 2025 - SV Technologies | All Rights Reserved</div>
+  </main>
+
+  <!-- JavaScript -->
+  <script>
+    function goToUpload() {
+      window.location.href = 'index.html';
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('sideMenu');
+      const overlay = document.getElementById('menuOverlay');
+      const isOpen = menu.classList.contains('active');
+      if (isOpen) {
+        menu.classList.remove('active');
+        overlay.classList.remove('show');
+      } else {
+        menu.classList.add('active');
+        overlay.classList.add('show');
+      }
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const icon = document.getElementById("themeIcon");
+      body.classList.toggle("dark-mode");
+
+      const isDark = body.classList.contains("dark-mode");
+      icon.className = `theme-icon ${isDark ? "moon" : "sun"}`;
+      icon.textContent = isDark ? "🌙" : "☀️";
+
+      localStorage.setItem('audiva_theme', isDark ? 'dark' : 'light');
+    }
+
+    // Load user preference on load
+    window.onload = function () {
+      if (localStorage.getItem('audiva_theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        const icon = document.getElementById("themeIcon");
+        icon.className = "theme-icon moon";
+        icon.textContent = "🌙";
+      }
+
+      if (sessionStorage.getItem('audiva_authenticated') !== 'true') {
+        setTimeout(() => {
+          alert('Unauthorized access. Please log in.');
+          window.location.href = 'login.html';
+        }, 500);
+      }
+    };
+  </script>
+</body>
+</html>

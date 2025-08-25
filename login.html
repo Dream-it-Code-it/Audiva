@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!-- Home Page (login.html) -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUDIVA - LOGIN</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --primary-color: #0056b3;
+      --accent-color: #ffffff;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-family);
+      background: linear-gradient(to right, #0056b3, #007bff);
+      color: var(--accent-color);
+    }
+
+    .site-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: var(--primary-color);
+      box-shadow: 0 4px 6px var(--shadow-color);
+    }
+
+    .menu-icon {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .cursive {
+      font-style: italic;
+      font-size: 1.2rem;
+    }
+
+    .title {
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 0.5rem 0;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    .login-box, .register-box {
+      background-color: #ffffff;
+      color: #333;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px var(--shadow-color);
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 2rem;
+    }
+
+    .register-box {
+      display: none;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin: 1rem 0 0.5rem;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #004a99;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <!-- <div class="menu-icon">&#9776;</div> -->
+    <div class="logo">Audiva</div>
+  </header>
+
+  <main class="login-container">
+    <h2 class="cursive">Play Your</h2>
+    <h1 class="title">AUDIVA</h1>
+    <p class="subtitle">Announcement Playback System</p>
+
+    <!-- Login Form -->
+    <div class="login-box">
+      <h3>Login</h3>
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter your username">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password">
+      <button onclick="loginHandler.handleLogin()">Login</button>
+    </div>
+
+    <!-- Register Form (Hidden Initially) -->
+    <div class="register-box" id="registerBox">
+      <h3>Register New User</h3>
+      <label for="newUsername">New Username</label>
+      <input type="text" id="newUsername" placeholder="Choose a username">
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" placeholder="Choose a password">
+      <button onclick="loginHandler.registerUser()">Register</button>
+      <button onclick="goBack()">Back to Login</button>
+    </div>
+  </main>
+
+  <script>
+    class LoginHandler {
+      constructor(defaultUsers = []) {
+        const savedUsers = JSON.parse(sessionStorage.getItem('audiva_users')) || defaultUsers;
+        this.users = savedUsers;
+      }
+
+      saveUsers() {
+        sessionStorage.setItem('audiva_users', JSON.stringify(this.users));
+      }
+
+      validate(username, password) {
+        return this.users.some(user => user.username === username && user.password === password);
+      }
+
+      handleLogin() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (this.validate(username, password)) {
+          sessionStorage.setItem('audiva_authenticated', 'true');
+          sessionStorage.setItem('audiva_user', username);
+          window.location.replace('home.html');
+        } else {
+          sessionStorage.removeItem('audiva_authenticated');
+          alert('Invalid username or password.');
+        }
+      }
+
+      registerUser() {
+        const newUsername = document.getElementById('newUsername').value.trim();
+        const newPassword = document.getElementById('newPassword').value.trim();
+
+        if (!newUsername || !newPassword) {
+          alert('Both fields are required.');
+          return;
+        }
+
+        if (this.users.some(user => user.username === newUsername)) {
+          alert('Username already exists.');
+          return;
+        }
+
+        this.users.push({ username: newUsername, password: newPassword });
+        this.saveUsers();
+        alert('User registered successfully. You can now log in.');
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
+      }
+    }
+
+    const defaultUsers = [
+      { username: 'admin', password: 'sv@2025' },
+      { username: 'guest', password: 'guest123' },
+      { username: 'user1', password: 'audio@2025' }
+    ];
+
+    const loginHandler = new LoginHandler(defaultUsers);
+
+    // Toggle registration form with Ctrl+Shift+U
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'U') {
+        const registerBox = document.getElementById('registerBox');
+        registerBox.style.display = registerBox.style.display === 'none' ? 'block' : 'none';
+      }
+    });
+
+    // Back to login button
+    function goBack() {
+      document.getElementById('registerBox').style.display = 'none';
+    }
+
+    // Restrict page access and delay if not authenticated
+    if (!location.pathname.endsWith('login.html') && sessionStorage.getItem('audiva_authenticated') !== 'true') {
+      setTimeout(() => {
+        alert('Unauthorized access. Please log in first.');
+        window.location.href = 'login.html';
+      }, 120000); // 2 minutes
+    }
+  </script>
+</body>
+</html>
